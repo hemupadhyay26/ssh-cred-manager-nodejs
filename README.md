@@ -55,7 +55,7 @@ This tool also allows you to organize your SSH credentials by associating them w
 ### `gotossh`
 
 - **Description**: This command lets you SSH into a server based on saved credentials.
-- **Usage**: Simply run `gotossh` to be prompted with a list of available servers. If you don't specify an identifier, the tool will display the list of stored credentials and allow you to choose one to SSH into.
+- **Usage**: Simply run `gotossh` to be prompted with a list of available servers. If you don't specify an identifier, the tool will display the list of stored credentials and allow you to choose one to SSH into. Use --help for more information.
 - **Example**:
 
    ```bash
@@ -69,7 +69,7 @@ This tool also allows you to organize your SSH credentials by associating them w
 - **Example**:
 
    ```bash
-   gotossh add
+   gotossh add | a
    ```
 
 ### `list`
@@ -79,7 +79,7 @@ This tool also allows you to organize your SSH credentials by associating them w
 - **Example**:
 
    ```bash
-   gotossh list
+   gotossh list | l
    ```
 
 ### `delete [id]`
@@ -89,7 +89,7 @@ This tool also allows you to organize your SSH credentials by associating them w
 - **Example**:
 
    ```bash
-   gotossh delete 1
+   gotossh delete | d ID
    ```
 
 ### `update [id]`
@@ -99,7 +99,7 @@ This tool also allows you to organize your SSH credentials by associating them w
 - **Example**:
 
    ```bash
-   gotossh update 1
+   gotossh update | u ID
    ```
 
 ### `wizard`
@@ -109,7 +109,7 @@ This tool also allows you to organize your SSH credentials by associating them w
 - **Example**:
 
    ```bash
-   gotossh wizard
+   gotossh wizard | w
    ```
 
 ### `whois [identifier]`
@@ -119,7 +119,7 @@ This tool also allows you to organize your SSH credentials by associating them w
 - **Example**:
 
    ```bash
-   gotossh whois myserver
+   gotossh whois <serverName|ID>
    ```
 
 ---
