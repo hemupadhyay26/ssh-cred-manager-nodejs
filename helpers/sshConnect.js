@@ -5,7 +5,7 @@ import inquirer from "inquirer";
 import figlet from "figlet"; // Import figlet
 
 // Function to fetch credentials and initiate SSH
-export function sshIntoServer(identifier) {
+export function sshIntoServer(identifier, pemKey = null, port = null) {
   const credentials = loadCredentials(); // Load credentials from the file
 
   // Ensure the identifier is in lowercase for case-insensitive comparison
@@ -42,11 +42,21 @@ export function sshIntoServer(identifier) {
     console.log(chalk.green(data)); // Display the server name as ASCII art
   });
 
-  console.log(chalk.green(`Using: ssh ${sshCommand}`));
+  // Build SSH command options
+  const sshArgs = [];
+  if (pemKey) {
+    sshArgs.push("-i", pemKey);
+  }
+  if (port) {
+    sshArgs.push("-p", port);
+  }
+  sshArgs.push(sshCommand);
+
+  console.log(chalk.green(`Using: ssh ${sshArgs.join(" ")}`));
 
   try {
     // Spawn a child process to execute the SSH command
-    const sshProcess = spawn("ssh", [sshCommand], {
+    const sshProcess = spawn("ssh", sshArgs, {
       stdio: "inherit", // Attach to the current terminal's I/O
     });
 
@@ -71,7 +81,7 @@ export function sshIntoServer(identifier) {
   }
 }
 
-export async function sshViaListIntoServer() {
+export async function sshViaListIntoServer(pemKey = null, port = null) {
   const credentials = loadCredentials(); // Load credentials from file
   if (!credentials || credentials.credentials.length === 0) {
     console.log(
@@ -86,9 +96,7 @@ export async function sshViaListIntoServer() {
     credentials.credentials
       .map(
         (cred, index) =>
-          `${index + 1}. ${cred.serverName || "Unnamed"} (${cred.username}@${
-            cred.hostname
-          })`
+          `${index + 1}. ${cred.serverName || "Unnamed"} (${cred.username}@$${cred.hostname})`
       )
       .join("\n")
   );
@@ -117,7 +125,11 @@ export async function sshViaListIntoServer() {
         }`
       )
     );
-    sshIntoServer(selectedCredential.serverName || selectedIndex);
+    sshIntoServer(
+      selectedCredential.serverName || selectedIndex,
+      pemKey,
+      port
+    );
   } else {
     console.log(chalk.red("\n❌ Invalid selection. Exiting..."));
   }
