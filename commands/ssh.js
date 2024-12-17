@@ -19,7 +19,7 @@ export function sshCommand(program) {
         }
       } catch (error) {
         // Graceful error handling to prevent unwanted logs
-        console.error(chalk.red(`\n❌ Something went wrong: ${error.message}`));
+        console.error(chalk.red(`\n❌ Something went wrong`));
       }
     });
 }

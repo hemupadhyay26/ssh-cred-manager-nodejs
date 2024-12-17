@@ -14,7 +14,8 @@
     "commander": "^12.1.0",
     "figlet": "^1.8.0",
     "fs": "^0.0.1-security",
-    "inquirer": "^12.2.0"
+    "inquirer": "^12.2.0",
+    "string-similarity": "^4.0.4"
   },
   "bin": {
     "gotossh": "./index.js"

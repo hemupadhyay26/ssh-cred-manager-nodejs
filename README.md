@@ -59,7 +59,7 @@ This tool also allows you to organize your SSH credentials by associating them w
 - **Example**:
 
    ```bash
-   gotossh
+   gotossh ssh <server-name>
    ```
 
 ### `add`
@@ -161,7 +161,7 @@ This tool also allows you to organize your SSH credentials by associating them w
 3. **SSH into a Server**:
 
    ```bash
-   gotossh
+   gotossh xyz
    ```
 
    Select a server from the list or provide an identifier to directly connect.
