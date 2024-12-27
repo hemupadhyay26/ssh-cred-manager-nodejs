@@ -9,6 +9,7 @@ import { updateCommand } from "./commands/update.js";
 import { wizardCommand } from "./commands/wizard.js";
 import { whoisCommand } from "./commands/whois.js";
 import { sshCommand } from "./commands/ssh.js";
+import { importExportCredentials } from "./commands/import-export.js";
 
 // Set up version and description for the CLI tool
 program.version("1.0.0").description("SSH Credential Manager CLI");
@@ -21,5 +22,7 @@ updateCommand(program); // Add the update command
 wizardCommand(program);
 whoisCommand(program);
 sshCommand(program);
+importExportCredentials(program)
+
 
 program.parse(process.argv);

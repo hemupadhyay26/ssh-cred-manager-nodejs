@@ -4,6 +4,7 @@ import chalk from "chalk";
 import inquirer from "inquirer";
 import figlet from "figlet"; // Import figlet
 import stringSimilarity from "string-similarity";
+import { clearPopupBox, showPopupBox } from "./popUpBox.js";
 
 // Gracefully handle unexpected exits and user interruptions
 function setupExitHandlers() {
@@ -30,10 +31,8 @@ setupExitHandlers();
 export async function sshIntoServer(identifier, pemKey = null, port = null) {
   const credentials = loadCredentials(); // Load credentials from the file
 
-  // Ensure the identifier is in lowercase for case-insensitive comparison
   const normalizedIdentifier = identifier.trim().toLowerCase();
 
-  // Find the credential by exact server name or ID
   const foundCredential = credentials.credentials.find(
     (cred) =>
       (cred.serverName &&
@@ -41,23 +40,18 @@ export async function sshIntoServer(identifier, pemKey = null, port = null) {
       (cred.id && cred.id === parseInt(normalizedIdentifier, 10))
   );
 
-  // If a perfect match is found, proceed to SSH
   if (foundCredential) {
     const { username, hostname, serverName } = foundCredential;
-    const sshCommand = `${username}@${hostname}`; // SSH address
+
+    // Start showing the popup box
+    const popupInterval = setInterval(
+      () => showPopupBox(serverName, hostname),
+      1000
+    );
 
     console.log(chalk.blue(`\n🚀 Connecting to ${serverName}...`));
 
-    // Use figlet to print the server name in ASCII art
-    figlet(serverName, (err, data) => {
-      if (err) {
-        console.log(chalk.red("\n❌ Error generating server name art: "), err);
-        return;
-      }
-      console.log(chalk.green(data)); // Display the server name as ASCII art
-    });
-
-    // Build SSH command options
+    const sshCommand = `${username}@${hostname}`; // SSH address
     const sshArgs = [];
     if (pemKey) {
       sshArgs.push("-i", pemKey);
@@ -70,21 +64,23 @@ export async function sshIntoServer(identifier, pemKey = null, port = null) {
     console.log(chalk.green(`Using: ssh ${sshArgs.join(" ")}`));
 
     try {
-      // Spawn a child process to execute the SSH command
       const sshProcess = spawn("ssh", sshArgs, {
-        stdio: "inherit", // Attach to the current terminal's I/O
+        stdio: "inherit",
       });
 
-      // Handle SSH process events
       sshProcess.on("error", (err) => {
         console.error(
           chalk.red(
             `\n❌ Error occurred while attempting to connect: ${err.message}`
           )
         );
+        clearInterval(popupInterval); // Stop the popup
+        clearPopupBox(); // Clear the popup from the screen
       });
 
       sshProcess.on("close", (code) => {
+        clearInterval(popupInterval); // Stop the popup
+        clearPopupBox(); // Clear the popup from the screen
         if (code === 0) {
           console.log(chalk.green("✅ SSH session closed successfully."));
         } else {
@@ -94,6 +90,8 @@ export async function sshIntoServer(identifier, pemKey = null, port = null) {
         }
       });
     } catch (err) {
+      clearInterval(popupInterval); // Stop the popup
+      clearPopupBox(); // Clear the popup from the screen
       console.error(chalk.red(`\n❌ Unexpected error: ${err.message}`));
     }
   } else {
@@ -135,7 +133,6 @@ export async function sshIntoServer(identifier, pemKey = null, port = null) {
     }
   }
 }
-
 export async function sshViaListIntoServer(pemKey = null, port = null) {
   const credentials = loadCredentials(); // Load credentials from file
   if (!credentials || credentials.credentials.length === 0) {
@@ -151,7 +148,7 @@ export async function sshViaListIntoServer(pemKey = null, port = null) {
     credentials.credentials
       .map(
         (cred, index) =>
-          `${index + 1}. ${cred.serverName || "Unnamed"} (${cred.username}@$${
+          `${index + 1}. ${cred.serverName || "Unnamed"} (${cred.username}@${
             cred.hostname
           })`
       )
@@ -182,7 +179,26 @@ export async function sshViaListIntoServer(pemKey = null, port = null) {
         }`
       )
     );
-    sshIntoServer(selectedCredential.serverName || selectedIndex, pemKey, port);
+
+    // Start showing the popup box
+    const popupInterval = setInterval(() => {
+      showPopupBox(selectedCredential.serverName, selectedCredential.hostname);
+    }, 1000);
+
+    try {
+      // Call sshIntoServer with the selected server details
+      await sshIntoServer(
+        selectedCredential.serverName || selectedIndex,
+        pemKey,
+        port
+      );
+    } catch (error) {
+      console.error(chalk.red(`\n❌ Error while connecting to the server: ${error.message}`));
+    } finally {
+      // Clear popup and stop the interval after SSH session ends
+      clearInterval(popupInterval);
+      clearPopupBox(); // Clear the popup from the screen
+    }
   } else {
     console.log(chalk.red("\n❌ Invalid selection. Exiting..."));
   }
