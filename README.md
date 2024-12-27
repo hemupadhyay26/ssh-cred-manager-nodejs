@@ -14,6 +14,8 @@ This tool also allows you to organize your SSH credentials by associating them w
 - **Delete Credentials**: Remove SSH credentials.
 - **Connect via SSH**: SSH into a server directly using saved credentials.
 - **Interactive Selection**: Choose a server from a list when no identifier is provided.
+- **Pop-up box**: To contineuosly know which server you are connecting to
+- **Import and Export credentials**: To import and export the credentials file for easy sharing
 
 ## Installation
 
@@ -120,6 +122,26 @@ This tool also allows you to organize your SSH credentials by associating them w
 
    ```bash
    gotossh whois <serverName|ID>
+   ```
+
+### `export --file [path_to_file]`
+
+- **Description**: To export the credentials json file.
+- **Usage**: Easy to share the your speed up ssh configuration with other user.
+- **Example**:
+
+   ```bash
+   gotossh export --file <path_to_file>
+   ```
+
+### `import --file [path_to_file]`
+
+- **Description**: To import the valid credentials json file you have exported.
+- **Usage**: Easy to share the your speed up ssh configuration with other user.
+- **Example**:
+
+   ```bash
+   gotossh import --file <path_to_file>
    ```
 
 ---
