@@ -183,7 +183,7 @@ This tool also allows you to organize your SSH credentials by associating them w
 3. **SSH into a Server**:
 
    ```bash
-   gotossh xyz
+   gotossh ssh xyz
    ```
 
    Select a server from the list or provide an identifier to directly connect.
